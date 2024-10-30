@@ -382,6 +382,8 @@ def _comp_op_(dyn_ast, iid, left, comparisons):
 def _call_(dyn_ast, iid, call, only_post, pos_args, kw_args):
     call_if_exists("runtime_event", dyn_ast, iid)
     call_if_exists("control_flow_event", dyn_ast, iid)
+    pos_args_copy = [x for x in pos_args] if pos_args is not None else []
+    kw_args_copy = {k: v for k, v in kw_args.items()} if kw_args is not None else {}
     if only_post:
         result = call
         new_res = call_if_exists(
@@ -398,7 +400,7 @@ def _call_(dyn_ast, iid, call, only_post, pos_args, kw_args):
             else:
                 kw_args = dict(kw_args, **a)
         pos_args = tuple(tmp)
-        call_if_exists("pre_call", dyn_ast, iid, call, pos_args, kw_args)
+        call_if_exists("pre_call", dyn_ast, iid, call, pos_args, kw_args, pos_args_copy, kw_args_copy)
         result = call(*pos_args, **kw_args)
         new_res = call_if_exists(
             "post_call", dyn_ast, iid, result, call, pos_args, kw_args
